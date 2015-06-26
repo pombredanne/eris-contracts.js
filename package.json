@@ -1,0 +1,42 @@
+{
+  "name": "dapp",
+  "version": "0.10.1",
+  "scripts": {
+    "test" : "mocha"
+  },
+  "dependencies": {
+    "bignumber.js": "debris/bignumber.js#master",
+    "eris-db": "~0.10.x",
+    "crypto-js": "^3.1.4"
+  },
+  "devDependencies" : {
+    "chai": "^2.1.1",
+    "ink-docstrap": "~0.5.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eris-ltd/eris-contracts.js"
+  },
+  "homepage": "https://github.com/eris-ltd/eris-contracts.js",
+  "bugs": {
+    "url": "https://github.com/eris-ltd/eris-contracts.js/issues"
+  },
+  "keywords": [
+    "eris",
+    "solidity",
+    "node.js",
+    "dapp",
+    "tendermint",
+    "eris-db",
+    "RPC"
+  ],
+  "author": "AndreasEris",
+  "authors": [
+    {
+      "name": "Andreas Olofsson",
+      "email": "andreas@erisindustries.com",
+      "url": "http://erisindustries.com"
+    }
+  ],
+  "license": "LGPL-3.0"
+}
