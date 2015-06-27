@@ -43,15 +43,13 @@ var contractFactory = contracts(abi);
 describe('TestCreate', function () {
 
     it("should create a contract using mock eris-db", function (done) {
-        contractFactory.new({data: ""}, function (error, data) {
+        contractFactory.new({to: newAddr, data: ""}, function (error, contract) {
             if (error) {
                 throw error;
             }
-            var contract = data;
             asrt.equal(contract.address, "9FC1ECFCAE2A554D4D1A000D0D80F748E66359E3");
             done();
         });
     });
 
 });
-
