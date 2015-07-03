@@ -4,8 +4,7 @@ var util = require('eris-db/lib/util');
 var BigNumber = require('bignumber.js');
 var asrt = require('assert');
 var edbModule = require("eris-db");
-var DevPipe = require('../../lib/pipes/dev_pipe');
-var cff = require('../../index');
+var eris = require('../../../index');
 
 var serverServerURL = "http://localhost:1337/server";
 
@@ -61,11 +60,9 @@ describe('TestCreateAndCall', function () {
                 throw err;
             }
             var edb = edbModule.createInstance("http://localhost:" + port + '/rpc');
-            var pipe = new DevPipe(edb, privKey);
-            contracts = cff.createInstance(pipe);
-
+            var pipe = new eris.pipes.DevPipe(edb, privKey);
+            contracts = eris.solidityContracts(pipe);
             console.log("Creating. This should take about 15 seconds.");
-
             var contractFactory = contracts(abi);
             contractFactory.new({data: code}, function (error, data) {
                 if (error) {
@@ -120,6 +117,5 @@ describe('TestCreateAndCall', function () {
         });
 
     });
-
 
 });

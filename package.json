@@ -1,15 +1,15 @@
 {
-  "name": "dapp",
-  "version": "0.10.1",
+  "name": "eris-contracts",
+  "version": "0.10.2",
   "scripts": {
     "test" : "mocha"
   },
   "dependencies": {
     "bignumber.js": "debris/bignumber.js#master",
-    "eris-db": "~0.10.x",
     "crypto-js": "^3.1.4"
   },
   "devDependencies" : {
+    "eris-db": "~0.10.x",
     "chai": "^2.1.1",
     "ink-docstrap": "~0.5.2"
   },

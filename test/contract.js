@@ -1,9 +1,10 @@
 var edbModule = require('eris-db');
 var asrt = require('assert');
-var edbMockClient = require('eris-db/test/mock/mock_client').createInstance();
+var EdbMockClient = require('eris-db/test/mock/mock_client');
 var contractModule = require('../index');
 var DevPipe = require('../lib/pipes/dev_pipe');
 
+var edbMockClient = new EdbMockClient();
 var edb = edbModule.createInstanceFromClient(edbMockClient);
 
 var abi = [{
@@ -36,7 +37,7 @@ var newAddr = "";
 
 var pipe = new DevPipe(edb, privKey);
 
-var contracts = contractModule.createInstance(pipe);
+var contracts = contractModule.solidityContracts(pipe);
 
 var contractFactory = contracts(abi);
 

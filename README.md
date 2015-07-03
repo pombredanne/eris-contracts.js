@@ -27,7 +27,7 @@ var contracts = cff.createInstance(pipe);
 ```
 
 Now it is ready to be used. The `contracts` object works exactly like the web3 one, except it isn't tied to the web3 object.
- 
+
 ```
 var myAbi = [...];
 var myCompiledCode = "";
@@ -48,7 +48,7 @@ contractFactory.new({data: code}, function(error, contract){
 
 You can stick up to two constructor arguments before the `{data: code}` param, though I haven't tested that with this system yet. This is btw. why you have to use an object (TxPayload - it's documented) instead of just a string. Will probably force the constructor params to be in an array later so that the payload can just be a code string as well as an object. Would be easier to verify then now with the variadic stuff.
 
-Note the regular error-first "node-back" callback for new contracts. This is used in all other contract methods as well since they're all IO, and because it's better. The example in `./test/live/create_and_call.js` shows how to do calls to the contracts add method. May/should add promises as an alternative later.
+Note the regular error-first "node-back" callback for new contracts. This is used in all other contract methods as well since they're all IO, and because it's better. The example in `./test/live/create_and_event.js` shows how to do calls to the contracts add method. May/should add promises as an alternative later.
 
 ```
 myContract.add(34, 22, function(error, sum){
@@ -60,6 +60,14 @@ The format is: params followed by the error-first callback. Always the same.
 
 
 WARNING: I have not tested these instructions, only copied from the create_and_call example. They may or may not work. I will also not be around to answer any questions for a while. If it's hard, then the only solution is to wait until the library is finished. It will probably take about a week + the work solidity events and server side stuff takes + eris-cli integration, starting when i get back on july 6th.
+
+## Objects and formats
+
+
+
+## Unit tests
+
+`mocha` or `npm test`
 
 ## Web3 licence
 

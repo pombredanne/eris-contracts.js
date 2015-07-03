@@ -1,8 +1,9 @@
 var contractsModule = require('./lib/contract');
+var pipes = require('./lib/pipes/pipes');
 
-exports.createInstance = function(pipe){
+exports.solidityContracts = function(pipe){
     contractsModule.init(pipe);
-    // Return contract to be consistent with web3. This may not be practical later, but
-    // works for now.
     return contractsModule.contract;
 };
+
+exports.pipes = pipes;
