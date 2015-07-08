@@ -1,0 +1,1 @@
+[{"constant":false,"inputs":[],"name":"get","outputs":[{"name":"","type":"bytes32"}],"type":"function"},{"constant":false,"inputs":[{"name":"input","type":"bytes32"}],"name":"set","outputs":[],"type":"function"},{"inputs":[],"type":"constructor"}]
