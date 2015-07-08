@@ -1,6 +1,6 @@
 # Dapp - the dapp library.
 
-This library is used to call contracts from javascript. This is a work in progress and is not intended for public use.
+**NOTE: This library is used to call contracts from javascript. This is a work in progress and is not intended for public use. ETA july 2015**
 
 ## Creating and running contracts.
 

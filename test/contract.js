@@ -4,6 +4,7 @@ var EdbMockClient = require('eris-db/test/mock/mock_client');
 var contractModule = require('../index');
 var DevPipe = require('../lib/pipes/dev_pipe');
 
+// TODO mock pipe instead.
 var edbMockClient = new EdbMockClient();
 var edb = edbModule.createInstanceFromClient(edbMockClient);
 

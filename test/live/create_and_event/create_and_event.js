@@ -122,3 +122,34 @@ describe('TestCreateAndCall', function () {
     });
 
 });
+
+
+
+var ctrct;
+
+contractFactory.new({data: myCompiledCode}, function(error, contract){
+    if (error) {
+        // Just do something.
+        console.log("You messed up");
+        throw error;
+    }
+    ctrct = contract;
+    run();
+});
+
+function run(){
+    var done = false;
+    // ctrct in closure. 'run' not touched until contract created.
+    ctrct.someMethod(someParam, function callback(error, data){
+        // logic here.
+        if(!done){
+            setTimeout(run, 30000);
+        } else {
+            finalize();
+        }
+    });
+}
+
+function finalize(){
+    // something
+}

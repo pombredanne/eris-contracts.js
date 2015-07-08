@@ -11,7 +11,7 @@ var tests = [
     { value: new String('hello'), is: false},
     { value: new BigNumber(0), is: true},
     { value: 132, is: false},
-    { value: '0x12', is: false},
+    { value: '0x12', is: false}
 
 ];
 

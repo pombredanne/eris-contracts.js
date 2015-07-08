@@ -1,14 +1,15 @@
 {
   "name": "eris-contracts",
-  "version": "0.10.2",
+  "version": "0.10.3",
   "scripts": {
-    "test" : "mocha"
+    "test": "mocha"
   },
   "dependencies": {
     "bignumber.js": "debris/bignumber.js#master",
-    "crypto-js": "^3.1.4"
+    "crypto-js": "^3.1.4",
+    "eris-db": "^0.10.13"
   },
-  "devDependencies" : {
+  "devDependencies": {
     "eris-db": "~0.10.x",
     "chai": "^2.1.1",
     "ink-docstrap": "~0.5.2"

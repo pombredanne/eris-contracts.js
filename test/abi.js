@@ -84,7 +84,6 @@ describe('lib/solidity/function', function () {
                     var sFun = new SolidityFunction(funcAbi, testData.address);
                     assert.equal(sFun.displayName(), testData.expectedName);
                     var payload = sFun.toPayload(testData.params);
-                    console.log(payload);
                     assert.equal(payload.to, testData.address);
                     assert.equal(payload.data, testData.expectedData);
                     assert.equal(sFun.signature(), sha3(funcAbi["name"]).slice(0, 8));
