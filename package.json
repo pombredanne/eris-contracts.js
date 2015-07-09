@@ -10,7 +10,6 @@
     "eris-db": "^0.10.13"
   },
   "devDependencies": {
-    "eris-db": "~0.10.x",
     "chai": "^2.1.1",
     "ink-docstrap": "~0.5.2"
   },
