@@ -48,6 +48,9 @@ exports.solidityContractsDev = function(erisdbURL, privateKey, callback){
 };
 
 exports.pipes = pipes;
+
 exports.utils = utils;
+exports.utils.htoa = utils.hexToAscii;
+exports.utils.atoh = utils.asciiToHex;
 
 exports.outputFormatters = outputFormatters;
