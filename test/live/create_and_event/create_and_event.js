@@ -78,7 +78,7 @@ var privKey = "6B72D45EB65F619F11CE580C8CAED9E0BADC774E9C9C334687A65DCBAD2C4151C
 var contracts;
 var contract;
 
-describe('TestCreateAndCall', function () {
+describe('TestCreateAndEvent', function () {
 
     before(function (done) {
         this.timeout(25000);
@@ -111,9 +111,6 @@ describe('TestCreateAndCall', function () {
                 var a = event.args.a.toString();
                 var b = event.args.b.toString();
                 var sum = event.args.sum.toString();
-                console.log("a: " + a);
-                console.log("b: " + b);
-                console.log("a + b: " + sum);
                 asrt.equal(sum, "30");
                 done();
             });

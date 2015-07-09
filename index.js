@@ -3,6 +3,7 @@ var pipes = require('./lib/pipes/pipes');
 var utils = require('./lib/utils/utils');
 var edbModule = require('eris-db');
 var DevPipe = require('./lib/pipes/dev_pipe');
+var outputFormatters = require('./lib/output_formatters');
 
 /**
  * Create a new solidity contracts object from the given pipe.
@@ -48,3 +49,5 @@ exports.solidityContractsDev = function(erisdbURL, privateKey, callback){
 
 exports.pipes = pipes;
 exports.utils = utils;
+
+exports.outputFormatters = outputFormatters;

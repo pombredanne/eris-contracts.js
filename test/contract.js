@@ -1,56 +1,88 @@
-var edbModule = require('eris-db');
 var asrt = require('assert');
-var EdbMockClient = require('eris-db/test/mock/mock_client');
-var contractModule = require('../index');
-var DevPipe = require('../lib/pipes/dev_pipe');
+var erisC = require('../index');
+var MockPipe = require('./mock/mock_pipe.js');
+var testData = require('./testdata/testdata.json');
+var contracts = erisC.solidityContracts(new MockPipe());
 
-// TODO mock pipe instead.
-var edbMockClient = new EdbMockClient();
-var edb = edbModule.createInstanceFromClient(edbMockClient);
+var abi = [
+    {
+        "constant": true,
+        "inputs": [
+            {
+                "name": "a",
+                "type": "int256"
+            },
+            {
+                "name": "b",
+                "type": "int256"
+            }
+        ],
+        "name": "add",
+        "outputs": [
+            {
+                "name": "sum",
+                "type": "int256"
+            }
+        ],
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "type": "constructor"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "name": "a",
+                "type": "int256"
+            },
+            {
+                "indexed": true,
+                "name": "b",
+                "type": "int256"
+            },
+            {
+                "indexed": true,
+                "name": "sum",
+                "type": "int256"
+            },
+            {
+                "indexed": false,
+                "name": "body",
+                "type": "bytes32"
+            }
+        ],
+        "name": "Added",
+        "type": "event"
+    }
+];
 
-var abi = [{
-    "name": "balance(address)",
-    "type": "function",
-    "inputs": [{
-        "name": "who",
-        "type": "address"
-    }],
-    "constant": true,
-    "outputs": [{
-        "name": "value",
-        "type": "uint256"
-    }]
-}, {
-    "name": "send(address,uint256)",
-    "type": "function",
-    "inputs": [{
-        "name": "to",
-        "type": "address"
-    }, {
-        "name": "value",
-        "type": "uint256"
-    }],
-    "outputs": []
-}];
-
-var privKey = "6B72D45EB65F619F11CE580C8CAED9E0BADC774E9C9C334687A65DCBAD2C4151CB3688B7561D488A2A4834E1AEE9398BEF94844D8BDBBCA980C11E3654A45906";
 var newAddr = "";
-
-var pipe = new DevPipe(edb, privKey);
-
-var contracts = contractModule.solidityContracts(pipe);
 
 var contractFactory = contracts(abi);
 
-describe('TestCreate', function () {
+describe('TestAll', function () {
 
-    it("should create a contract using mock eris-db", function (done) {
+    it("should create a contract and simulate an event fired upon calling.", function (done) {
         contractFactory.new({to: newAddr, data: ""}, function (error, contract) {
-            if (error) {
-                throw error;
-            }
-            asrt.equal(contract.address, "9FC1ECFCAE2A554D4D1A000D0D80F748E66359E3");
-            done();
+            asrt.equal(contract.address, "9FC1ECFCAE2A554D4D1A000D0D80F748E66359E3", "Contract address wrong.");
+            asrt.deepEqual(contract.abi, abi, "Contract abi not matching expected.");
+            contract.Added(function(error, event){
+                asrt.ifError(error);
+                asrt.equal(event.event, "Added");
+                asrt.equal(event.address.slice(24), contract.address);
+                var a = event.args.a.toString();
+                var b = event.args.b.toString();
+                var sum = event.args.sum.toString();
+                asrt.equal(sum, "30");
+                done();
+            });
+            contract.add(5, 25, function (error, data) {
+                asrt.equal(data.toString(), '30');
+            });
+
         });
     });
 
