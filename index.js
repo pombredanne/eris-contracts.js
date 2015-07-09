@@ -32,7 +32,7 @@ exports.solidityContractsDev = function(erisdbURL, privateKey, callback){
     var edb = edbModule.createInstance(erisdbURL);
     var pipe = new DevPipe(edb, privateKey);
     contractsModule.init(pipe);
-    var contract = contracsModule.contract;
+    var contract = contractsModule.contract;
     if(callback){
         edb.start(function(error){
             if(error){
