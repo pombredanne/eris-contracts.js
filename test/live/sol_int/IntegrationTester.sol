@@ -19,7 +19,7 @@ contract IntegrationTester {
     }
 
     function getBytes32() external constant returns (bytes32 bytesOut){
-        bytesOut = "Testbytes";
+        bytesOut = 0x1213;
         return;
     }
 

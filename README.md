@@ -1,6 +1,8 @@
-# Dapp - the dapp library.
+# eris-contracts - the javascript contracts library.
 
-**NOTE: This library is used to call contracts from javascript. This is a work in progress and is not intended for public use. ETA july 2015**
+**NOTE: This library is used to call contracts from javascript. This is a work in progress and is not intended for public use. It is only up so that we may closed-beta test using public npm packages.**
+
+**ETA july 2015**
 
 ## Creating and running contracts.
 
@@ -57,7 +59,6 @@ myContract.add(34, 22, function(error, sum){
 ```
 
 The format is: params followed by the error-first callback. Always the same.
-
 
 WARNING: I have not tested these instructions, only copied from the create_and_call example. They may or may not work. I will also not be around to answer any questions for a while. If it's hard, then the only solution is to wait until the library is finished. It will probably take about a week + the work solidity events and server side stuff takes + eris-cli integration, starting when i get back on july 6th.
 

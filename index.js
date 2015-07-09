@@ -33,10 +33,11 @@ exports.solidityContractsDev = function(erisdbURL, privateKey, callback){
     var pipe = new DevPipe(edb, privateKey);
     contractsModule.init(pipe);
     var contract = contractsModule.contract;
+
     if(callback){
         edb.start(function(error){
             if(error){
-                callback(error)
+                callback(error);
             } else {
                 callback(null, contract);
             }
@@ -44,12 +45,13 @@ exports.solidityContractsDev = function(erisdbURL, privateKey, callback){
     } else {
         return contract;
     }
-
 };
 
 exports.pipes = pipes;
 
-exports.utils = utils;
+exports.utils = {};
+exports.utils.hexToAscii = utils.hexToAscii;
+exports.utils.asciiToHex = utils.asciiToHex;
 exports.utils.htoa = utils.hexToAscii;
 exports.utils.atoh = utils.asciiToHex;
 

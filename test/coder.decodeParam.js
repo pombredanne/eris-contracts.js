@@ -15,7 +15,6 @@ describe('lib/solidity/coder', function () {
             });
         };
 
-
         test({ type: 'int', expected: new bn(1),            value: '0000000000000000000000000000000000000000000000000000000000000001'});
         test({ type: 'int', expected: new bn(16),           value: '0000000000000000000000000000000000000000000000000000000000000010'});
         test({ type: 'int', expected: new bn(-1),           value: 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'});
