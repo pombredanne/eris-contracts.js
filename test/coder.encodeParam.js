@@ -1,6 +1,11 @@
 var chai = require('chai');
 var assert = chai.assert;
 var coder = require('../lib/solidity/coder');
+var BigNumber = require('bignumber.js');
+
+function bn(val, enc) {
+    return new BigNumber(val, enc);
+}
 
 describe('lib/solidity/coder', function () {
     describe('encodeParam', function () {
@@ -20,6 +25,10 @@ describe('lib/solidity/coder', function () {
         test({ type: 'int256', value: -1,           expected: 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'});
         test({ type: 'bytes32', value: '0x6761766f66796f726b',
             expected: '6761766f66796f726b0000000000000000000000000000000000000000000000'});
+        test({ type: 'bytes32', value: bn('0x6761766f66796f726b'),
+            expected: '00000000000000000000000000000000000000000000006761766f66796f726b'});
+        test({ type: 'bytes32', value: 12,
+            expected: '000000000000000000000000000000000000000000000000000000000000000c'});
         test({ type: 'bytes32', value: '0x731a3afc00d1b1e3461b955e53fc866dcf303b3eb9f4c16f89e388930f48134b',
             expected: '731a3afc00d1b1e3461b955e53fc866dcf303b3eb9f4c16f89e388930f48134b'});
         test({ type: 'bytes32', value: '0x02838654a83c213dae3698391eabbd54a5b6e1fb3452bc7fa4ea0dd5c8ce7e29',

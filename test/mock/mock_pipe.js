@@ -23,7 +23,7 @@ nUtil.inherits(MockPipe, Pipe);
  * @param callback - The error-first callback.
  */
 MockPipe.prototype.transact = function(txPayload, callback) {
-    callback(null, testData.transact);
+    callback(null, testData.transact.contract_addr);
 };
 
 /**
