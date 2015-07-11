@@ -43,5 +43,7 @@ MockPipe.prototype.call = function (txPayload, callback) {
  * @param {function} eventCallback - error-first callback. The data object is a solidity event object.
  */
 MockPipe.prototype.eventSub = function (accountAddress, createCallback, eventCallback) {
-    eventCallback(null, testData.event);
+    if(eventCallback) {
+        eventCallback(null, testData.event);
+    }
 };

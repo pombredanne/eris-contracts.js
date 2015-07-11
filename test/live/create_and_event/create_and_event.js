@@ -104,7 +104,7 @@ describe('TestCreateAndEvent', function () {
     describe('add', function () {
 
         it("should add 5 and 25", function (done) {
-            contract.Added(function(error, event){
+            contract.Added.once(function(error, event){
                 asrt.ifError(error);
                 asrt.equal(event.event, "Added");
                 asrt.equal(event.address.slice(24), contract.address);

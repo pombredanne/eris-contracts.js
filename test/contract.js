@@ -63,14 +63,14 @@ var newAddr = "";
 
 var contractFactory = contracts(abi);
 
-describe('TestAll', function () {
+describe('TestContract', function () {
 
-    it("should create a contract and simulate an event fired upon calling.", function (done) {
+    it("should create a contract and simulate an event fired upon calling", function (done) {
         contractFactory.new({to: newAddr, data: ""}, function (error, contract) {
             console.log(contract.address);
             asrt.equal(contract.address, "9FC1ECFCAE2A554D4D1A000D0D80F748E66359E3", "Contract address wrong.");
             asrt.deepEqual(contract.abi, abi, "Contract abi not matching expected.");
-            contract.Added(function(error, event){
+            contract.Added.once(function(error, event){
                 asrt.ifError(error);
                 asrt.equal(event.event, "Added");
                 asrt.equal(event.address.slice(24), contract.address);
