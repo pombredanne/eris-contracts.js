@@ -45,5 +45,7 @@ MockPipe.prototype.call = function (txPayload, callback) {
 MockPipe.prototype.eventSub = function (accountAddress, createCallback, eventCallback) {
     if(eventCallback) {
         eventCallback(null, testData.event);
+    } else {
+        createCallback(null, testData.event);
     }
 };
