@@ -75,6 +75,8 @@ describe('lib/solidity/coder', function () {
         test({ type: 'bool', value: false,          expected: '0000000000000000000000000000000000000000000000000000000000000000'});
         test({ type: 'address', value: '0x407d73d8a49eeb85d32cf465507dd71d507100c1',
             expected: '000000000000000000000000407d73d8a49eeb85d32cf465507dd71d507100c1'});
+        test({ type: 'address', value: '407d73d8a49eeb85d32cf465507dd71d507100c1',
+            expected: '000000000000000000000000407d73d8a49eeb85d32cf465507dd71d507100c1'});
         test({ type: 'real', value: 1,              expected: '0000000000000000000000000000000100000000000000000000000000000000'});
         test({ type: 'real', value: 2.125,          expected: '0000000000000000000000000000000220000000000000000000000000000000'});
         test({ type: 'real', value: 8.5,            expected: '0000000000000000000000000000000880000000000000000000000000000000'});
