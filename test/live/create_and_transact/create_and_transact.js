@@ -66,6 +66,8 @@ describe('TestCreateAndTransact', function () {
             var contractFactory = contracts(abi);
             contractFactory.new({data: code}, function (error, data) {
                 if (error) {
+                    console.log("New contract error");
+                    console.log(error);
                     throw error;
                 }
                 contract = data;
@@ -75,13 +77,15 @@ describe('TestCreateAndTransact', function () {
     });
 
     describe('setTestBytes32', function () {
+        var input = 0xDEADBEEF;
+        var expected = ['0000000000000000000000000000000000000000000000000123456789ABCDEF',
+            '00000000000000000000000000000000000000000000000000000000DEADBEEF'];
+
         this.timeout(25000);
         it("should set the bytes in the contract to 0xdeadbeef", function (done) {
-            contract.setTestBytes32(0xdeadbeef, function (error, data) {
+            contract.setTestBytes32(input, function (error, output) {
                 asrt.ifError(error);
-                var res = data.toString();
-                console.log(res);
-                // asrt.equal(res, "30");
+                asrt.deepEqual(output, expected);
                 done();
             });
         });

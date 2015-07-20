@@ -114,7 +114,9 @@ describe('TestCreateAndEvent', function () {
                 asrt.equal(sum, "30");
                 done();
             });
-            contract.add(5, 25, function (error, data) {});
+            contract.add(5, 25, function (error, data) {
+                asrt.ifError(error);
+            });
         });
     });
 
