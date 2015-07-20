@@ -89,7 +89,7 @@ contract MyContract {
 
 The JSON ABI of that contract would look like this:
 
-```
+``` javascript
 [{
     "constant":true,
     "inputs":[
@@ -140,7 +140,7 @@ var contracts = erisC.contractsDev(erisdbURL, PrivKey);
 
 The `contractsDev` method is is just a convenient way of doing all of this:
 
-```
+``` javascript
 // Get 'eris-contracts'.
 var erisContracts = require('eris-contracts');
 
@@ -293,7 +293,7 @@ You may override this by using the `call` and `sendTransaction` methods, althoug
 
 These are examples of overriding the default behavior, and also examples of **what not to do**.
 
-```
+``` javascript
 // Transact to a constant method - bad.
 myContract.getInts.sendTransaction(function(error, data){});
 
@@ -319,7 +319,7 @@ Note: If the backing `eris-db` object uses a websocket connection the events wil
 
 Event objects are on the following form:
 
-```
+``` javascript
 {
     "event" : <string>
     "address" : <string>
@@ -333,7 +333,7 @@ Event objects are on the following form:
 
 `args` is a map where the event parameter names are the keys, and their values the values. In the `AddressSet`-event, the `args` object would look like this:
 
-```
+``` javascript
 {
     "itWasSet" : <boolean>
 }
