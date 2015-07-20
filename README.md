@@ -26,7 +26,7 @@ The preferred method of configuring your blockchain and starting up the server w
 
 Basic usage for development.
 
-```
+``` javascript
 var erisC = require('eris-contracts');
 
 // URL to the rpc endpoint of the eris-db server.
@@ -42,7 +42,7 @@ The `contracts` object works like the one in `web3.js` and is essentially a "fac
 
 There is two ways of using these factories/templates - one is to create a javascript contract and at the same time deploy a corresponding solidity contract. This is done using `new`:
 
-```
+``` javascript
 var myAbi = [...];
 var myCompiledCode = "...";
 
@@ -62,7 +62,7 @@ myContractFactory.new({data: myCompiledCode}, function(error, contract){
 
 You may also create a new javascript contract and point it to an already existing solidity contract account using `at`:
 
-```
+``` javascript
 var contractAddress = "...";
 
 var myExistingContract;
@@ -78,7 +78,7 @@ myContractFactory.at(contractAddress, function(error, contract){
 
 This is an example solidity contract:
 
-```
+``` javascript
 contract MyContract {
 
   function add(int a, int b) constant returns (int sum) {
@@ -111,7 +111,7 @@ The JSON ABI of that contract would look like this:
 
 You would access the `add` function from the javascript contract like this:
 
-```
+``` javascript
 myContract.add(34, 22, addCallback);
 
 function addCallback(error, sum){
@@ -131,7 +131,7 @@ This is an overview and a short description of most objects. More details can be
 
 Eris contracts is what you get when requiring `eris-contracts`. It's a wrapper around the `contracts` module with a few additional utilities. You create contracts using `erisContracts.contracts` or one of its variations. Here's the example from the top:
 
-```
+``` javascript
 var erisC = require('eris-contracts');
 var erisdbURL = "http://localhost:1337/rpc";
 var PrivKey = "...";
@@ -168,7 +168,7 @@ The pipes are available as `erisContracts.pipes`. It has the `DevPipe`, `LocalSi
 
 The `contracts` module is the basis for all solidity contracts you create. It lets you create contract factories from Solidity ABI files. The factories are all instances of the `ContractFactory` class.
 
-```
+``` javascript
 var myJsonAbi = [...];
 var myOtherJsonAbi = [...];
 // Create a factory (or contract template) from 'myJsonAbi'
@@ -186,7 +186,7 @@ Instances of `ContractFactory` are used to create instances that point to certai
 
 Calling `ContractFactory.new` will create a new instance of `Contract`, but will also deploy the contract onto the chain. The javascript contract will get the address of the newly deployed contract automatically.
 
-```
+``` javascript
 var myContract;
 var myCode = "...";
 
@@ -202,7 +202,7 @@ myContractFactory.new({data: myCode}, function(error, contract){
 
 This is used to create a new contract object that points to the address of a contract that is assumed to already exist on the chain.
 
-```
+``` javascript
 var address = "...";
 var myContract;
 
@@ -214,7 +214,7 @@ myContractFactory.at(address, function(error, contract){
 
 No check is made to see if the contract actually exists, so you may omit the callback and instead get the new contract object as the return-value.
 
-```
+``` javascript
 var address = "00000000000000000000000000000000DEADBEEF"
 var myContract = myContractFactory.at(address);
 ```
@@ -229,7 +229,7 @@ The transaction options object has the following fields:
 `to`: The address of the target account. This is only used internally.
 `data` : The transaction data. This is only used when creating new contracts, to pass in the compiled code:
 
-```
+``` javascript
 myContractFactory.new({data: myCode}, function(error, contract){
     if(error) {throw error}
     myContract = contract;
@@ -305,7 +305,7 @@ myContract.setAddress.call("..", function(error, data){});
 
 Events are called like this:
 
-```
+``` javascript
 myContract.MyEvent(startCallback, stopCallback);
 ```
 
@@ -355,7 +355,7 @@ It also has the following methods:
 
 This is an example of a trivial module that handles this event on one single contract of this type:
 
-```
+``` javascript
 var addressSetSub;
 var myContract;
 
@@ -401,7 +401,7 @@ If you have done dapp-development with `web3.js`, you'll quickly learn how to us
 
 You **must** use callbacks with `eris-contracts`. In `web3`, you may omit the callback and do a regular try-catch + return.
 
-```
+``` javascript
 var sum;
 
 try{
@@ -421,7 +421,7 @@ In `eris-contracts` you may listen to events in two different ways.
 
 The first is for long-lasting subscriptions. You pass 2 callbacks to the event method, the first one takes an error and the event subscription object as parameters, and is called when the event is set up. The second one takes an error and and the event object.
 
-```
+``` javascript
 myContract.MyEvent(startCallback, eventCallback);
 
 var myEventSub;
@@ -450,7 +450,7 @@ These type of subscriptions will run until the `stop` method is called on the su
 
 The second way is for when you want to stop automatically after the first event has arrived. There is two ways to do this; either just drop the start callback and use only the event callback, or use the `once` modifier.
 
-```
+``` javascript
 myContract.MyEvent(eventCallback);
 
 // Equivalent to this
