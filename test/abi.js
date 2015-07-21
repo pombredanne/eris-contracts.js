@@ -67,7 +67,28 @@ var tests = [
     },
     {
         address: "0x2222222222222222222222222222222222222222",
-        params: [[5,4,3,2,1]],
+        params: [[5, 4, 3, 2, 1]],
+        expectedName: "testArr",
+        expectedData: "C00C1C370000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000500000000000000000000000000000000000000000000000000000000000000050000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000300000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000001"
+    }
+];
+
+var testsFail = [
+    {
+        address: "0x2222222222222222222222222222222222222222",
+        params: [7],
+        expectedName: "balance",
+        expectedData: "E3D670D70000000000000000000000001234123412341234123412341234123412341234"
+    },
+    {
+        address: "0x2222222222222222222222222222222222222222",
+        params: ["0x1234123412341234123412341234123412341234", "gavofyork"],
+        expectedName: "send",
+        expectedData: "D0679D340000000000000000000000001234123412341234123412341234123412341234000000000000000000000000000000000000000000000000000000000000004B"
+    },
+    {
+        address: "0x2222222222222222222222222222222222222222",
+        params: [[5, 4, 3, "gavofyork", 1]],
         expectedName: "testArr",
         expectedData: "C00C1C370000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000500000000000000000000000000000000000000000000000000000000000000050000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000300000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000001"
     }
@@ -75,11 +96,11 @@ var tests = [
 
 describe('lib/solidity/function', function () {
 
-    describe('', function () {
+    describe('success', function () {
         for (var i = 0; i < tests.length; i++) {
             var funcAbi = abi[i];
             var testData = tests[i];
-            (function(funcAbi, testData) {
+            (function (funcAbi, testData) {
                 it('should create a solidity function.', function () {
                     var sFun = new SolidityFunction(funcAbi, testData.address);
                     assert.equal(sFun.displayName(), testData.expectedName);
@@ -87,6 +108,21 @@ describe('lib/solidity/function', function () {
                     assert.equal(payload.to, testData.address);
                     assert.equal(payload.data, testData.expectedData);
                     assert.equal(sFun.signature(), sha3(funcAbi["name"]).slice(0, 8));
+                });
+            })(funcAbi, testData)
+        }
+    });
+
+    describe('fail', function () {
+        for (var i = 0; i < tests.length; i++) {
+            var funcAbi = abi[i];
+            var testData = testsFail[i];
+            (function (funcAbi, testData) {
+                it('should create a solidity function and fail to format the data.', function () {
+                    var sFun = new SolidityFunction(funcAbi, testData.address);
+                    assert.throws(function () {
+                            sFun.toPayload(testData.params);
+                        });
                 });
             })(funcAbi, testData)
         }
