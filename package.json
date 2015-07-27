@@ -1,6 +1,6 @@
 {
   "name": "eris-contracts",
-  "version": "0.10.15",
+  "version": "0.10.16",
   "scripts": {
     "test": "mocha"
   },
