@@ -1,0 +1,8 @@
+=============== Jul 28, 2015 (CEST) ===============
+22:50:02.390319 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+22:50:02.390400 db@open opening
+22:50:02.390424 journal@recovery F·1
+22:50:02.390906 journal@recovery recovering @1
+22:50:02.391819 memdb@flush created L0@2 N·91 S·7KiB "\x00\x9c\xa6..+Ԃ,v76":"\xef\xe3\xad..\xa8\x8a\x1b,v7"
+22:50:02.392522 db@janitor F·3 G·0
+22:50:02.392532 db@open done T·2.126918ms
