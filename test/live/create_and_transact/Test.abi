@@ -1,5 +1,17 @@
 [
   {
+    "constant": true,
+    "inputs": [],
+    "name": "testBytes32",
+    "outputs": [
+      {
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "type": "function"
+  },
+  {
     "constant": false,
     "inputs": [
       {
@@ -15,6 +27,18 @@
       },
       {
         "name": "bytes32New",
+        "type": "bytes32"
+      }
+    ],
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "testBytes32Str",
+    "outputs": [
+      {
+        "name": "",
         "type": "bytes32"
       }
     ],

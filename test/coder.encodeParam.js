@@ -24,7 +24,7 @@ describe('lib/solidity/coder', function () {
         test({ type: 'int256', value: 16,           expected: '0000000000000000000000000000000000000000000000000000000000000010'});
         test({ type: 'int256', value: -1,           expected: 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'});
         test({ type: 'bytes32', value: '0x6761766f66796f726b',
-            expected: '6761766f66796f726b0000000000000000000000000000000000000000000000'});
+            expected: '00000000000000000000000000000000000000000000006761766f66796f726b'});
         test({ type: 'bytes32', value: bn('0x6761766f66796f726b'),
             expected: '00000000000000000000000000000000000000000000006761766f66796f726b'});
         test({ type: 'bytes32', value: 12,
@@ -36,7 +36,7 @@ describe('lib/solidity/coder', function () {
         test({ type: 'bytes', value: '0x6761766f66796f726b',
             expected: '0000000000000000000000000000000000000000000000000000000000000020' +
             '0000000000000000000000000000000000000000000000000000000000000009' +
-            '6761766f66796f726b0000000000000000000000000000000000000000000000'});
+            '00000000000000000000000000000000000000000000006761766f66796f726b'});
         test({ type: 'bytes', value: '0x731a3afc00d1b1e3461b955e53fc866dcf303b3eb9f4c16f89e388930f48134b',
             expected: '0000000000000000000000000000000000000000000000000000000000000020' +
             '0000000000000000000000000000000000000000000000000000000000000020' +
@@ -47,9 +47,9 @@ describe('lib/solidity/coder', function () {
         test({ type: 'bytes', value: '0xc3a40000c3a4',
             expected: '0000000000000000000000000000000000000000000000000000000000000020' +
             '0000000000000000000000000000000000000000000000000000000000000006' +
-            'c3a40000c3a40000000000000000000000000000000000000000000000000000'});
+            '0000000000000000000000000000000000000000000000000000c3a40000c3a4'});
         test({ type: 'bytes32', value: '0xc3a40000c3a4',
-            expected: 'c3a40000c3a40000000000000000000000000000000000000000000000000000'});
+            expected: '0000000000000000000000000000000000000000000000000000c3a40000c3a4'});
         test({ type: 'string', value: '\xc3\xa4\x00\x00\xc3\xa4',
             expected: '0000000000000000000000000000000000000000000000000000000000000020' +
             '0000000000000000000000000000000000000000000000000000000000000006' +
@@ -106,7 +106,6 @@ describe('lib/solidity/coder', function () {
     });
 });
 
-
 describe('lib/solidity/coder', function () {
     describe('encodeParams', function () {
         var test = function (t) {
@@ -123,7 +122,7 @@ describe('lib/solidity/coder', function () {
         test({ types: ['int256'], values: [16],             expected: '0000000000000000000000000000000000000000000000000000000000000010'});
         test({ types: ['int256'], values: [-1],             expected: 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'});
         test({ types: ['bytes32'], values: ['0x6761766f66796f726b'],
-            expected: '6761766f66796f726b0000000000000000000000000000000000000000000000'});
+            expected: '00000000000000000000000000000000000000000000006761766f66796f726b'});
         test({ types: ['string'], values: ['gavofyork'],    expected: '0000000000000000000000000000000000000000000000000000000000000020' +
         '0000000000000000000000000000000000000000000000000000000000000009' +
         '6761766f66796f726b0000000000000000000000000000000000000000000000'});
@@ -148,11 +147,11 @@ describe('lib/solidity/coder', function () {
             '0000000000000000000000000000000000000000000000000000000000000003' +
             '0000000000000000000000000000000000000000000000000000000000000004'});
         test({ types: ['bytes32', 'int'], values: ['0x6761766f66796f726b', 5],
-            expected: '6761766f66796f726b0000000000000000000000000000000000000000000000' +
+            expected: '00000000000000000000000000000000000000000000006761766f66796f726b' +
             '0000000000000000000000000000000000000000000000000000000000000005'});
         test({ types: ['int', 'bytes32'], values: [5, '0x6761766f66796f726b'],
             expected: '0000000000000000000000000000000000000000000000000000000000000005' +
-            '6761766f66796f726b0000000000000000000000000000000000000000000000'});
+            '00000000000000000000000000000000000000000000006761766f66796f726b'});
         test({ types: ['string', 'int'], values: ['gavofyork', 5],
             expected: '0000000000000000000000000000000000000000000000000000000000000040' +
             '0000000000000000000000000000000000000000000000000000000000000005' +
@@ -201,7 +200,7 @@ describe('lib/solidity/coder', function () {
             '231a3afc00d1b1e3461b955e53fc866dcf303b3eb9f4c16f89e388930f48134b',
             3,
             '0x331a3afc00d1b1e3461b955e53fc866dcf303b3eb9f4c16f89e388930f48134b' +
-            '431a3afc00d1b1e3461b955e53fc866dcf303b3eb9f4c16f89e388930f48134b',
+            '431a3afc00d1b1e3461b955e53fc866dcf303b3eb9f4c16f89e388930f48134b'
         ],
             expected: '0000000000000000000000000000000000000000000000000000000000000005' +
             '0000000000000000000000000000000000000000000000000000000000000080' +
@@ -216,4 +215,23 @@ describe('lib/solidity/coder', function () {
     });
 });
 
+describe('lib/solidity/coder', function () {
+    describe('encodeParams', function () {
 
+        it("should detect non hex and throw", function(){
+            assert.throws(function() {
+                    coder.encodeParam('bytes32', "NotHex");
+                },
+                "Strings must be hex if the type is bytesX"
+            );
+        })
+
+        it("should detect non hex and throw", function(){
+            assert.throws(function() {
+                    coder.encodeParam('bytes32', "0xStillNotHex");
+                },
+                "Strings must be hex if the type is bytesX"
+            );
+        })
+    });
+});
