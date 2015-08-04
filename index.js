@@ -61,13 +61,60 @@ exports.getErisDb = function(){
 
 exports.pipes = pipes;
 
+/**
+ * Utils has methods for working with strings.
+ *
+ * @type {{}}
+ */
 exports.utils = {};
 exports.utils.hexToAscii = utils.hexToAscii;
 exports.utils.asciiToHex = utils.asciiToHex;
+exports.utils.padLeft = utils.padLeft;
+exports.utils.padRight = utils.padRight;
 exports.utils.htoa = utils.hexToAscii;
 exports.utils.atoh = utils.asciiToHex;
 
+/**
+ * Output formatters are used to transform the output of contract transactions and calls.
+ * These objects takes all named params and put them as fields in the object, and also puts
+ * the raw output into an array.
+ *
+ * If the output of a solidity function is (someInt, someBytes), the output will be an
+ * array by default, for example: [BigNumber(5), "abba"]. What you get after formatting
+ * with 'outputFormatters.json' is:
+ *
+ * var obj = {
+ *   params: {
+ *      someInt: BigNumber(5),
+ *      someBytes: "abba"
+ *   },
+ *   raw: [BigNumber(5), "abba"]
+ * }
+ *
+ * You may also use 'jsonStrings', which would display all numbers as decimal strings instead - in params - but
+ * leave the values intact in 'raw'.
+ *
+ * var stringObj = {
+ *   params: {
+ *      someInt: "5",
+ *      someBytes: "abba"
+ *   },
+ *   raw: [BigNumber(5), "abba"]
+ * }
+ *
+ * Finally, there's 'paramsToJson' that will do the 'jsonStrings' conversion, then JSON.stringify the 'params'
+ * object and return it alone. This is good when passing the values on to a http response.
+ *
+ * What 'paramsToJson' will return is the result of: JSON.stringify(stringObj.params)
+ *
+ * NOTE: 'paramsToJson' will only work if all output params are named. Otherwise they will not be included in 'params'
+ * and therefore not in the JSON-formatted output. When working with unnamed params, you should probably just
+ * JSON.stringify the output array.
+ *
+ * @type {{}}
+ */
 exports.outputFormatters = outputFormatters;
+exports.outputFormatters.paramsToJson = outputFormatters.valuesToJsonString(outputFormatters.jsonStrings);
 
 /**
  * @deprecated
