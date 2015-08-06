@@ -80,7 +80,6 @@ describe('TestCreateAndCall', function () {
             contract.add(5, 25, function (error, data) {
                 asrt.ifError(error);
                 var res = data.toString();
-                console.log(res);
                 asrt.equal(res, "30");
                 done();
             });
@@ -90,7 +89,6 @@ describe('TestCreateAndCall', function () {
             contract.add(256, 33, function (error, data) {
                 asrt.ifError(error);
                 var res = data.toString();
-                console.log(res);
                 asrt.equal(res, "289");
                 done();
             });
@@ -100,7 +98,6 @@ describe('TestCreateAndCall', function () {
             contract.add(15, -3, function (error, data) {
                 asrt.ifError(error);
                 var res = data.toString();
-                console.log(res);
                 asrt.ok(res, "12");
                 done();
             });
@@ -110,7 +107,6 @@ describe('TestCreateAndCall', function () {
             contract.add(-15, 3, function (error, data) {
                 asrt.ifError(error);
                 var res = data.toString();
-                console.log(res);
                 asrt.equal(res, "-12");
                 done();
             });

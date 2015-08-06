@@ -1,0 +1,14 @@
+[
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "getMyAddress",
+    "outputs": [
+      {
+        "name": "callerAddress",
+        "type": "address"
+      }
+    ],
+    "type": "function"
+  }
+]

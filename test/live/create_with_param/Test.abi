@@ -1,0 +1,23 @@
+[
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "uintVal",
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "input",
+        "type": "uint256"
+      }
+    ],
+    "type": "constructor"
+  }
+]

@@ -1,5 +1,6 @@
-/* This file is for testing a contract create + call.
- */
+
+/*
+
 var util = require('eris-db/lib/util');
 var BigNumber = require('bignumber.js');
 var asrt = require('assert');
@@ -56,7 +57,7 @@ describe('TestCreateAndTransact100Times', function () {
 
     before(function (done) {
         this.timeout(5000);
-        var edb = edbModule.createInstance("http://localhost:1337/rpc");
+        var edb = edbModule.createInstance("ws://localhost:1337/socketrpc");
         edb.start(function (error) {
             if (error) {
                 throw error;
@@ -90,6 +91,7 @@ describe('TestCreateAndTransact100Times', function () {
         it("should set the bytes in the contract to 0xdeadbeef then do 100 transactions at once", function (done) {
             for (var i = 0; i < 100; i++) {
                 contract.setTestBytes32(input, function (error, output) {
+                    console.log(output);
                     asrt.ifError(error);
                     reg(done);
                 });
@@ -107,4 +109,4 @@ describe('TestCreateAndTransact100Times', function () {
 
     }
 
-});
+});*/

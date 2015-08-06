@@ -24,18 +24,32 @@ The preferred method of configuring your blockchain and starting up the server w
 
 ## Usage
 
-Basic usage for development.
+To quickly set up a development/test-environment:
 
 ``` javascript
 var erisC = require('eris-contracts');
 
 // URL to the rpc endpoint of the eris-db server.
 var erisdbURL = "http://localhost:1337/rpc";
-// This is the private key you will use to sign transactions. In the simplest possible case 
-// you would have a chain with only one validator, and you would use its private key.
-var PrivKey = "...";
+// See the 'Private Keys and Signing' section below for more info on this.
+var accountData = {address: "...", privKey: "..."};
+// contractsDev lets you use an accountData object (address & private key) directly, i.e. no key/signing daemon is needed.
 var contracts = erisC.contractsDev(erisdbURL, PrivKey);
 ``` 
+
+If using a websocket connection, you must add a callback to `contractsDev`.
+
+``` javascript
+// ...
+var contracts = erisC.contractsDev(erisdbURL, PrivKey, function(error){
+    if(!error){
+        // Server is ready.
+        // ...
+    }
+});
+```
+
+For more advanced usage, see the API section.
 
 The `contracts` object works like the one in `web3.js` and is essentially a "factory factory" for javascript contracts. You call it and pass a JSON ABI file, and get a factory (or template) for that particular contract type in return, which you then use to create instances that points to actual on-chain contract accounts.
 
@@ -121,9 +135,37 @@ function addCallback(error, sum){
 
 Finally, if you create a contract factory/template using an ABI, and the on-chain contracts that the javascript contracts points to does not use that ABI, the behavior of the javascript contract will be undefined.
 
+## Private Keys and Signing
+
+Eris/Tendermint uses public key cryptography to protect the identity of the users/accounts. Each account has a public key and a private key. The public key (or public address, rather, which is a representation of the public key) is used to identify the account. It may be shown to others in plain-text. 
+
+In order to transact from the account (which is required to actually do things), the account holder has to sign data using their private key. The private key should never be exposed to others. 
+
+For beginners, it can help to think about the public/private keypair as a username/password combination. The public key (public address) is the name, and the private key is the password. Others will see your username in most systems, but they normally have to provide the password in order to actually do something under that name. This is why private keys should never be exposed. 
+
+The exception to the private key rule is if you are testing/developing. It is of course safe to generate a "worthless" key-pair to create test-accounts when developing, since the key is not actually protecting anything of value. It is essentially the same thing as having a test login/password when testing a web-service, or database, or anything else. That is why you may find private keys in things like unit tests. 
+
+Even if worthless/throw-away keys are used when developing and testing, it is very important that they are removed before the system goes live, so it is important to handle them with care - even during testing. 
+
+### Eris and keys
+
+`eris-contracts.js`, and it's dependency `eris-db.js` are server-side, node.js libraries. They should always run on the same machine as the blockchain client, or at least they should be running in the same, private network. For production-level code, we stick to the following rule:
+
+**Private keys should not be passed between end-users and the blockchain server**
+
+Technically it's not more or less safe to send private keys compared to other secret information such as passwords, but it is bad practice. There are better solutions. These are some setups we believe will be common for Eris-DApps:
+
+1. decentralized, client signs - Every user runs eris-db on their machine. This means both their private key and blockchain client is on the same machine, so all key-stuff happens locally.
+
+2. distributed, client-signs - eris-db nodes run on a dedicated set of machines/servers. Users connect via their browser, but keep their keys on their own machine and sign whatever they need to sign locally, using a browser plugins, locally running daemon, or something else.
+
+3. distributed, server signs - Servers hold the keys and signs transactions on behalf of the users. The users access the servers via their browser and would identify themselves through some traditional, secure login-system. This would be common in transitional/hybrid systems.
+
+Currently we can only do setup 1 and 3 (in production), but we're integrating our key-daemon into both javascript and our command-line tool, which will open up for 2 as well.
+
 ## API
 
-At the core of this library is the `Contract` objects. Everything else is utilities for creating the contracts and formatting the input and output. 
+At the core of this library is the `Contract` objects. Everything else is utilities for creating the contracts and formatting the input and output.
 
 This is an overview and a short description of most objects. More details can be found in the code (jsdoc). This will later replace the current docs and tutorials on our [main site](https://erisindustries.com).
 
