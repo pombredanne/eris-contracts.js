@@ -16,7 +16,7 @@ You need a running [eris-db](https://github.com/eris-ltd/eris-db) server. `eris-
 
 #### Docker
 
-Docker is supported. You can build the docker image by running `build.sh` from inside the `DOCKER` directory.
+Docker is supported, but it is not recommended to build and run manually (see 'Eris cli' below).
 
 #### Eris cli
 
@@ -137,15 +137,15 @@ Finally, if you create a contract factory/template using an ABI, and the on-chai
 
 ## Private Keys and Signing
 
-Eris/Tendermint uses public key cryptography to protect the identity of the users/accounts. Each account has a public key and a private key. The public key (or public address, rather, which is a representation of the public key) is used to identify the account. It may be shown to others in plain-text. 
+Eris/Tendermint uses public key cryptography to protect the identity of the users/accounts. Each account has a public key and a private key. The public key (or public address, rather, which is a representation of the public key) is used to identify the account. It may be shown to others in plain-text.
 
-In order to transact from the account (which is required to actually do things), the account holder has to sign data using their private key. The private key should never be exposed to others. 
+In order to transact from the account (which is required to actually do things), the account holder has to sign data using their private key. The private key should never be exposed to others.
 
-For beginners, it can help to think about the public/private keypair as a username/password combination. The public key (public address) is the name, and the private key is the password. Others will see your username in most systems, but they normally have to provide the password in order to actually do something under that name. This is why private keys should never be exposed. 
+For beginners, it can help to think about the public/private keypair as a username/password combination. The public key (public address) is the name, and the private key is the password. Others will see your username in most systems, but they normally have to provide the password in order to actually do something under that name. This is why private keys should never be exposed.
 
-The exception to the private key rule is if you are testing/developing. It is of course safe to generate a "worthless" key-pair to create test-accounts when developing, since the key is not actually protecting anything of value. It is essentially the same thing as having a test login/password when testing a web-service, or database, or anything else. That is why you may find private keys in things like unit tests. 
+The exception to the private key rule is if you are testing/developing. It is of course safe to generate a "worthless" key-pair to create test-accounts when developing, since the key is not actually protecting anything of value. It is essentially the same thing as having a test login/password when testing a web-service, or database, or anything else. That is why you may find private keys in things like unit tests.
 
-Even if worthless/throw-away keys are used when developing and testing, it is very important that they are removed before the system goes live, so it is important to handle them with care - even during testing. 
+Even if worthless/throw-away keys are used when developing and testing, it is very important that they are removed before the system goes live, so it is important to handle them with care - even during testing.
 
 ### Eris and keys
 
@@ -157,7 +157,7 @@ Technically it's not more or less safe to send private keys compared to other se
 
 1. decentralized, client signs - Every user runs eris-db on their machine. This means both their private key and blockchain client is on the same machine, so all key-stuff happens locally.
 
-2. distributed, client-signs - eris-db nodes run on a dedicated set of machines/servers. Users connect via their browser, but keep their keys on their own machine and sign whatever they need to sign locally, using a browser plugins, locally running daemon, or something else.
+2. distributed, client signs - eris-db nodes run on a dedicated set of machines/servers. Users connect via their browser, but keep their keys on their own machine and sign whatever they need to sign locally, using a browser plugins, locally running daemon, or something else.
 
 3. distributed, server signs - Servers hold the keys and signs transactions on behalf of the users. The users access the servers via their browser and would identify themselves through some traditional, secure login-system. This would be common in transitional/hybrid systems.
 
@@ -508,7 +508,7 @@ function eventCallback(error, eventSub){
 
 The `once` is optional, but it is included as an alternative since it makes the intentions a bit more clear.
 
-The event-objects themselves are identical to the web3 events when it comes to topics and data, and the `subscription` object works pretty much like a `watch`. The reason for diverging at all is that `Tendermint` does not use log filters but regular events. More info below.
+The event-objects themselves are identical to the web3 events when it comes to topics and data. The reason for diverging is that `Tendermint` does not use log filters but regular events.
 
 
 ## Tests
@@ -517,7 +517,7 @@ The event-objects themselves are identical to the web3 events when it comes to t
 
 ## Web3 licence
 
-This library is built on [web3.js](https://github.com/ethereum/web3.js). Here is the licence used at the time of pulling in the code (2015-06-21):
+This library is built on [web3.js](https://github.com/ethereum/web3.js). Here is the web3.js licence:
 
 ```
 web3.js is free software: you can redistribute it and/or modify
