@@ -84,12 +84,28 @@ describe('TestContract', function () {
         });
     });
 
-    it("should create a contract and fail to format input", function (done) {
+    it("should create a contract and fail due to bad input", function (done) {
         contractFactory.new({to: newAddr, data: ""}, function (error, contract) {
             contract.add(5, "gavofyork", function (error, data) {
                 asrt.equal(error.message, "new BigNumber() not a number: gavofyork", "BigNumber error not reported.");
                 done();
             });
+        });
+    });
+
+    it("should create a contract and test input succesfully", function (done) {
+        contractFactory.new({to: newAddr, data: ""}, function (error, contract) {
+            var testVal = contract.add.testInputs(5, 77);
+            asrt.ok(testVal, "input test did return false on proper input");
+            done();
+        });
+    });
+
+    it("should create a contract and test negative for bad input", function (done) {
+        contractFactory.new({to: newAddr, data: ""}, function (error, contract) {
+            var testVal = contract.add.testInputs(5, "gavofyork");
+            asrt.ok(!testVal, "input test did not return false on bad input");
+            done();
         });
     });
 
