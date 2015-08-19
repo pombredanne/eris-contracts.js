@@ -41,10 +41,12 @@ If using a websocket connection, you must add a callback to `contractsDev`.
 
 ``` javascript
 // ...
-var contracts = erisC.contractsDev(erisdbURL, PrivKey, function(error){
+var contracts;
+erisC.contractsDev(erisdbURL, PrivKey, function(error, _contracts){
     if(!error){
         // Server is ready.
         // ...
+        contracts = _contracts;
     }
 });
 ```
