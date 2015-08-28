@@ -1,0 +1,39 @@
+[
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "testBytes32",
+    "outputs": [
+      {
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "bytes32In",
+        "type": "bytes32"
+      }
+    ],
+    "name": "setTestBytes32",
+    "outputs": [
+      {
+        "name": "bytes32Prev",
+        "type": "bytes32"
+      },
+      {
+        "name": "bytes32New",
+        "type": "bytes32"
+      }
+    ],
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "type": "constructor"
+  }
+]

@@ -36,29 +36,35 @@ var code = "606060405260788060116000396000f30060606040526000357c0100000000000000
 var address = "1234123412341234123412341234123412341234";
 var privKey = "6B72D45EB65F619F11CE580C8CAED9E0BADC774E9C9C334687A65DCBAD2C4151CB3688B7561D488A2A4834E1AEE9398BEF94844D8BDBBCA980C11E3654A45906";
 
-var contracts;
+var address2 = '0000000000000000000000000000000000001234';
+
 var contract;
 
 describe('TestCreateAndCallWithAddress', function () {
 
     before(function (done) {
-        this.timeout(25000);
-        util.getNewErisServer(serverServerURL, requestData, function (err, port) {
-            if (err) {
-                throw err;
+
+        this.timeout(5000);
+        var edb = edbModule.createInstance("ws://localhost:1337/socketrpc");
+
+        edb.start(function (error) {
+            if (error) {
+                throw error;
             }
-            var edb = edbModule.createInstance("http://localhost:" + port + '/rpc');
             var pipe = new eris.pipes.DevPipe(edb, {address: address, privKey: privKey});
-            contracts = eris.contracts(pipe);
+            var contracts = eris.contracts(pipe);
+            console.log("Creating. This should take a couple of seconds.");
             var contractFactory = contracts(abi);
             contractFactory.new({data: code}, function (error, data) {
                 if (error) {
+                    console.log("New contract error");
+                    console.log(error);
                     throw error;
                 }
                 contract = data;
                 done();
             });
-        })
+        });
     });
 
     describe('getMyAddress', function () {
@@ -70,6 +76,15 @@ describe('TestCreateAndCallWithAddress', function () {
                 done();
             });
         });
+
+        it("should return the address '" + address2 + "'", function (done) {
+            contract.getMyAddress({from: address2},function (error, data) {
+                asrt.ifError(error);
+                asrt.equal(data, address2);
+                done();
+            });
+        });
+
     });
 
 });
