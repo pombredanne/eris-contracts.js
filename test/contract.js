@@ -1,7 +1,6 @@
 var asrt = require('assert');
 var erisC = require('../index');
 var MockPipe = require('./mock/mock_pipe.js');
-var testData = require('./testdata/testdata.json');
 var contracts = erisC.contracts(new MockPipe());
 
 var abi = [
