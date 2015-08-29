@@ -3,8 +3,11 @@ var util = require('eris-db/lib/util');
 var BigNumber = require('bignumber.js');
 var asrt = require('assert');
 var edbModule = require("eris-db");
+var eris = require('../../../index');
+
 
 var test_data = require('eris-db/test/testdata/testdata.json');
+
 
 var abi = [
     {
@@ -38,13 +41,17 @@ var code = "6060604052670123456789abcdef6001026000600050555b5b608e80602560003960
 
 var privKey = "6B72D45EB65F619F11CE580C8CAED9E0BADC774E9C9C334687A65DCBAD2C4151CB3688B7561D488A2A4834E1AEE9398BEF94844D8BDBBCA980C11E3654A45906";
 
+var edb;
+
+var contractFactory;
+
 var contract;
 
 describe('TestCreateAndTransact100Times', function () {
 
     before(function (done) {
         this.timeout(5000);
-        var edb = edbModule.createInstance("ws://localhost:1337/socketrpc");
+        edb = edbModule.createInstance("ws://localhost:1337/socketrpc");
         edb.start(function (error) {
             if (error) {
                 throw error;
@@ -52,7 +59,7 @@ describe('TestCreateAndTransact100Times', function () {
             var pipe = new eris.pipes.DevPipe(edb, privKey);
             var contracts = eris.contracts(pipe);
             console.log("Creating. This should take a couple of seconds.");
-            var contractFactory = contracts(abi);
+            contractFactory = contracts(abi);
             contractFactory.new({data: code}, function (error, data) {
                 if (error) {
                     console.log("New contract error");
@@ -73,10 +80,28 @@ describe('TestCreateAndTransact100Times', function () {
         it("should set the bytes in the contract to 0xdeadbeef then do 100 transactions at once", function (done) {
 
             for (var i = 0; i < 100; i++) {
-                contract.setTestBytes32(input, function (error, output) {
-                    asrt.ifError(error);
-                    reg(done);
-                });
+
+                setTimeout(function(){
+                    if(Math.random() < 0.33) {
+                        contract.setTestBytes32(input, function (error, output) {
+                            asrt.ifError(error);
+                            reg(done);
+                        });
+                    } else if(Math.random() < 0.66) {
+                        contractFactory.new({data: code}, function (error, data) {
+                            if (error) {
+                                console.log("New contract error");
+                                console.log(error);
+                                throw error;
+                            }
+                            reg(done);
+                        });
+                    } else {
+                        edb.namereg().setEntry(privKey, Math.random().toString(), "data", 500, function(){
+                            reg(done);
+                        });
+                    }
+                }, Math.floor(Math.random()*15000));
             }
         });
 

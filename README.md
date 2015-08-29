@@ -103,7 +103,7 @@ contract MyContract {
 }
 ```
 
-The JSON ABI of that contract would look like this:
+The JSON ABI of that contract would be this:
 
 ``` javascript
 [{
@@ -149,22 +149,6 @@ The exception to the private key rule is if you are testing/developing. It is of
 
 Even if worthless/throw-away keys are used when developing and testing, it is very important that they are removed before the system goes live, so it is important to handle them with care - even during testing.
 
-### Eris and keys
-
-`eris-contracts.js`, and it's dependency `eris-db.js` are server-side, node.js libraries. They should always run on the same machine as the blockchain client, or at least they should be running in the same, private network. For production-level code, we stick to the following rule:
-
-**Private keys should not be passed between end-users and the blockchain server**
-
-Technically it's not more or less safe to send private keys compared to other secret information such as passwords, but it is bad practice. There are better solutions. These are some setups we believe will be common for Eris-DApps:
-
-1. decentralized, client signs - Every user runs eris-db on their machine. This means both their private key and blockchain client is on the same machine, so all key-stuff happens locally.
-
-2. distributed, client signs - eris-db nodes run on a dedicated set of machines/servers. Users connect via their browser, but keep their keys on their own machine and sign whatever they need to sign locally, using a browser plugins, locally running daemon, or something else.
-
-3. distributed, server signs - Servers hold the keys and signs transactions on behalf of the users. The users access the servers via their browser and would identify themselves through some traditional, secure login-system. This would be common in transitional/hybrid systems.
-
-Currently we can only do setup 1 and 3 (in production), but we're integrating our key-daemon into both javascript and our command-line tool, which will open up for 2 as well.
-
 ## API
 
 At the core of this library is the `Contract` objects. Everything else is utilities for creating the contracts and formatting the input and output.
@@ -204,9 +188,32 @@ var contracts = eris.solidityContracts(pipe);
 
 #### Pipes
 
-Pipes are used to connect `eris-contracts` with the `eris-db` javascript API. It currently uses Tendermint. Although they could be used to connect with other blockchain clients as well, that is not the purpose. The real purpose is to enable multiple different ways of signing transactions. The `DevPipe` will take a private key which it sends to the server with each transaction so that the server can sign the transaction with the key. Passing private keys around is not a good thing though, so in a production environment it's better to have signing logic on the client side (perhaps in a locally running signing daemon or browser plugin). A signing function can then be passed to a `LocalSignerPipe` and used by `eris-contract`. For now, `DevPipe` is the standard because we don't have the infrastructure in place for local signing.
+Pipes are used to connect `eris-contracts` with the `eris-db` javascript API. Th purpose of `pipes` is to enable multiple different ways of signing transactions. The `DevPipe` will take a private key which it sends to the server with each transaction so that the server can sign the transaction with the key. This should only be used in dev, or when the node.js server and blockchain client is running on the same machine or a private network.
+
+LocalSignerPipe is for applications where end-users will sign transactions themselves using a key. A signing function can then be passed to a `LocalSignerPipe` and used by `eris-contract`. For now, `DevPipe` is the standard because **we do not yet have the infrastructure in place for local signing**.
  
 The pipes are available as `erisContracts.pipes`. It has the `DevPipe`, `LocalSignerPipe` and also the base `Pipe` class in case someone wants to extend it to create their own pipe.
+
+#### Accounts
+
+Accounts are managed via the pipe. The `DevPipe` takes account data in the constructor (as per the example above), but the `Pipe` class comes with a few standard methods as well.
+ 
+`Pipe.addAccount(accountData)` - Add a new account to the list of available accounts. Will throw if the ID is already in use.
+`Pipe.removeAccount(accountId)` - Remove the account with the given ID. Will throw if no account with the given ID is found.
+`Pipe.setDefaultAccount(accountId)` - Set the account with the given ID as the default account (the account that will be used if no `from` account is added to the call/transaction options). Will throw if no account with the given ID is found.
+
+Account data is context sensitive. For `DevPipe`, which manages the account data in javascript:
+
+AccountData
+```
+{
+    address: <string>
+    pubKey: <string>
+    privKey: <string>
+}
+```
+
+In a local signer implementation, account data would likely just be an identifier used for the account (which is managed elsewhere).
 
 ### the contracts module
 
@@ -270,8 +277,11 @@ A check that can be done manually is to first try and get the account at that ad
 
 The transaction options object has the following fields:
 
-`to`: The address of the target account. This is only used internally.
-`data` : The transaction data. This is only used when creating new contracts, to pass in the compiled code:
+`from`: This is used to set the sender account, and must be the account's public address. In the case of transactions you need to have registered the account data with the `pipe` (in the case of `DevPipe`), or with the key daemon (in the case of `LocalSignerPipe` - which is not fully implemented yet). If no account with the given address is found, the function callback will receive an error. When doing a simulated call (i.e. calling a `constant` function), the address you pass in will be used directly.
+
+`to`: The address of the target account. This is **only set internally** as each javascript contracts targets a specific on-chain contract, and the address to that contract was automatically set during creation.
+
+`data` : The transaction data. For a user, this is **only set when creating new contracts**, to pass in the compiled code:
 
 ``` javascript
 myContractFactory.new({data: myCode}, function(error, contract){
@@ -279,6 +289,10 @@ myContractFactory.new({data: myCode}, function(error, contract){
     myContract = contract;
 }); 
 ```
+
+In a contract function, the options object must be added right before the callback. If no such object is added, it will use the default `from` address that was added to the pipe, the `to` value is set by the contract in question, and `data` is set by the function in question.
+
+`contract.someConstFunc(arg0, arg1, ... , argN, {from: fromAddress}, callbackFn);`
 
 ### Contract
 
@@ -350,14 +364,16 @@ myContract.setAddress.call("..", function(error, data){});
 Events are called like this:
 
 ``` javascript
-myContract.MyEvent(startCallback, stopCallback);
+myContract.MyEvent(startCallback, eventCallback);
 ```
 
 `startCallback` is error-first, and returns the subscription management object as the second param.
 
 `eventCallback` is error-first, and returns an event object as the second param. It is fired off every time a new event comes in.
 
-Note: If the backing `eris-db` object uses a websocket connection the events will come in as they happen. If it uses a HTTP connection then the subscription object will poll for events once every second (by default). It will then fire the callback once for each new event (if any), in the same order they came in. If you have lots of event activity and use HTTP, don't set the polling interval too high or you will have long periods of inactivity followed by quick bursts.
+The `startCallback` can be omitted to create a `once` subscription i.e. a subscription that will close down automatically when the first event is received. There's an alternative syntax for this as well which makes the intentions a bit more clear: `myContract.MyEvent.once(eventCallback)`. 
+
+**Note**: If the backing `eris-db` object uses a websocket connection, events will come in as they happen. If it uses a HTTP connection then the subscription object will poll for events once every second (by default). It will then fire the callback once for each new event (if any), in the same order they came in. If you have lots of event activity and use HTTP, don't set the polling interval too high or you will have long periods of inactivity followed by a burst of new events.
 
 ##### The Event object
 
@@ -461,57 +477,11 @@ The reason is because they allow blocking http calls to be made. `eris-contracts
 
 ### Events
 
-In `eris-contracts` you may listen to events in two different ways.
+In `eris-contracts` you do not use watches and filters, but events. See the event section above for instructions.
 
-The first is for long-lasting subscriptions. You pass 2 callbacks to the event method, the first one takes an error and the event subscription object as parameters, and is called when the event is set up. The second one takes an error and and the event object.
+### Transacting / calling
 
-``` javascript
-myContract.MyEvent(startCallback, eventCallback);
-
-var myEventSub;
-
-function startCallback(error, eventSub){
-    if(error){
-        // Handle
-    }
-    myEventSub = eventSub;
-};
- 
-function eventCallback(error, eventSub){
-    if(error){
-        // Handle
-    }
-    // Process
-    // ...
-    
-    if(doneWithWork()){
-        myEventSub.stop();
-    }
-}
-```
-
-These type of subscriptions will run until the `stop` method is called on the subscription objects.
-
-The second way is for when you want to stop automatically after the first event has arrived. There is two ways to do this; either just drop the start callback and use only the event callback, or use the `once` modifier.
-
-``` javascript
-myContract.MyEvent(eventCallback);
-
-// Equivalent to this
-myContract.MyEvent.once(eventCallback);
-
-function eventCallback(error, eventSub){
-    if(error){
-        // Handle
-    }
-    // Logic
-}
-```
-
-The `once` is optional, but it is included as an alternative since it makes the intentions a bit more clear.
-
-The event-objects themselves are identical to the web3 events when it comes to topics and data. The reason for diverging is that `Tendermint` does not use log filters but regular events.
-
+Transacting and calling is done via the javascript contract objects, but the mechanics is slightly different. Ethereum keeps the accounts in the client, while our client (Tendermint) expects the account info, such as private keys or pre-signed transactions, to be provided by the caller. See the section on `pipes` for more info.
 
 ## Tests
 
