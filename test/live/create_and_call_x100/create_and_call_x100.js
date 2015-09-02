@@ -83,7 +83,7 @@ describe('TestCreateAndCall100Times', function () {
         this.timeout(60000); // 1 minute
 
         it("do 100 calls at once", function (done) {
-            for (var i = 0; i < 1000; i++) {
+            for (var i = 0; i < 100; i++) {
                 contract.testBytes32(input, function (error, output) {
                     asrt.ifError(error);
                     reg(done);
@@ -96,7 +96,7 @@ describe('TestCreateAndCall100Times', function () {
     var counter = 0;
 
     function reg(done) {
-        if (++counter === 1000) {
+        if (++counter === 100) {
             done();
         }
     }
