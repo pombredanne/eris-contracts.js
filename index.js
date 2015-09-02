@@ -79,7 +79,7 @@ exports.utils.toRightPaddedHex = function(str){
 };
 
 exports.utils.fromRightPaddedHex = function(str){
-    if(length < 2){
+    if(str.length < 2){
         return "";
     }
     if(str.slice(0,2) == "0x"){
