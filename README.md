@@ -176,7 +176,7 @@ var erisContracts = require('eris-contracts');
 var erisdbModule = require("eris-db");
 
 // Create a new instance of ErisDB that uses the given URL.
-var erisdb = erisdbModule.createInstance("http://localhost:1337/rpc');
+var erisdb = erisdbModule.createInstance("http://localhost:1337/rpc");
 // The private key.
 var privKey = "...";
 
