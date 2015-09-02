@@ -74,27 +74,6 @@ exports.utils.padRight = utils.padRight;
 exports.utils.htoa = utils.hexToAscii;
 exports.utils.atoh = utils.asciiToHex;
 
-exports.utils.toRightPaddedHex = function(str){
-    utils.padRight(utils.asciiToHex(str), 32);
-};
-
-exports.utils.fromRightPaddedHex = function(str){
-    if(str.length < 2){
-        return "";
-    }
-    if(str.slice(0,2) == "0x"){
-        str = str.slice(2);
-    }
-    for(var i = 0; i < str; i++){
-        var index = 2*i;
-        if(str[index] == "0" && str[index + 1] == "0"){
-            str = str.slice(0, index - 1);
-            break;
-        }
-    }
-    return utils.hexToAscii(str);
-};
-
 /**
  * Output formatters are used to transform the output of contract transactions and calls.
  * These objects takes all named params and put them as fields in the object, and also puts
