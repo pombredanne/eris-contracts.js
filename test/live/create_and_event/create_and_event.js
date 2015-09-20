@@ -88,9 +88,9 @@ describe('TestCreateAndEvent', function () {
             }
             var edb = edbModule.createInstance("http://localhost:" + port + '/rpc');
             var pipe = new eris.pipes.DevPipe(edb, privKey);
-            contracts = eris.solidityContracts(pipe);
+            contracts = eris.newContractManager(pipe);
             console.log("Creating. This should take about 15 seconds.");
-            var contractFactory = contracts(abi);
+            var contractFactory = contracts.newContractFactory(abi);
             contractFactory.new({data: code}, function (error, data) {
                 if (error) {
                     throw error;
@@ -102,8 +102,9 @@ describe('TestCreateAndEvent', function () {
     });
 
     describe('add', function () {
-
+        this.timeout(25000);
         it("should add 5 and 25", function (done) {
+
             contract.Added.once(function(error, event){
                 asrt.ifError(error);
                 asrt.equal(event.event, "Added");

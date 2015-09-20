@@ -61,9 +61,9 @@ describe('TestCreateAndCall', function () {
             }
             var edb = edbModule.createInstance("http://localhost:" + port + '/rpc');
             var pipe = new eris.pipes.DevPipe(edb, privKey);
-            contracts = eris.solidityContracts(pipe);
+            contracts = eris.newContractManager(pipe);
             console.log("Creating. This should take about 15 seconds.");
-            var contractFactory = contracts(abi);
+            var contractFactory = contracts.newContractFactory(abi);
             contractFactory.new({data: code}, function (error, data) {
                 if (error) {
                     throw error;

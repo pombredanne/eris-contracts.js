@@ -65,9 +65,9 @@ describe('TestCreateAndTransact', function () {
                     throw error;
                 }
                 var pipe = new eris.pipes.DevPipe(edb, privKey);
-                contracts = eris.contracts(pipe);
+                contracts = eris.newContractManager(pipe);
                 console.log("Creating. This should take a couple of seconds.");
-                var contractFactory = contracts(abi);
+                var contractFactory = contracts.newContractFactory(abi);
                 contractFactory.new({data: code}, function (error, data) {
                     if (error) {
                         console.log("New contract error");

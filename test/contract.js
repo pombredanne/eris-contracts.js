@@ -1,7 +1,7 @@
 var asrt = require('assert');
 var erisC = require('../index');
 var MockPipe = require('./mock/mock_pipe.js');
-var contracts = erisC.contracts(new MockPipe());
+var contractManager = erisC.newContractManager(new MockPipe());
 
 var abi = [
     {
@@ -60,7 +60,7 @@ var abi = [
 
 var newAddr = "";
 
-var contractFactory = contracts(abi);
+var contractFactory = contractManager.newContractFactory(abi);
 
 describe('TestContract', function () {
 

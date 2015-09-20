@@ -52,9 +52,9 @@ describe('TestCreateAndCallWithAddress', function () {
                 throw error;
             }
             var pipe = new eris.pipes.DevPipe(edb, {address: address, privKey: privKey});
-            var contracts = eris.contracts(pipe);
+            var contracts = eris.newContractManager(pipe);
             console.log("Creating. This should take a couple of seconds.");
-            var contractFactory = contracts(abi);
+            var contractFactory = contracts.newContractFactory(abi);
             contractFactory.new({data: code}, function (error, data) {
                 if (error) {
                     console.log("New contract error");

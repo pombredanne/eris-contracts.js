@@ -1,4 +1,4 @@
-var contractsModule = require('./lib/contract');
+var contractsModule = require('./lib/contractManager');
 var pipes = require('./lib/pipes/pipes');
 var utils = require('./lib/utils/utils');
 var edbModule = require('eris-db');
@@ -10,6 +10,44 @@ var edb;
 /**
  * Create a new solidity contracts object from the given pipe.
  *
+ * @param pipe
+ * @returns {*|contract}
+ */
+exports.newContractManager = function(pipe){
+    return contractsModule.newContractManager(pipe);
+};
+
+/**
+ * Create a new solidity contracts object with a DevPipe from the given
+ * rpc-URL and private key.
+ *
+ * @param {string} erisdbURL - The url to the eris-db server. Usually (http://localhost:1337/rpc)
+ * @param {string} accounts - Used to pass in a list of accounts. NOTE: This is for DEV ONLY. The keys are not protected.
+ * @param {function(error, data)} [callback] - Callback is only needed if using a websocket client. If callback is not provided,
+ * the object will be returned, otherwise it is passed as the data param in the (normal error-first) callback.
+ */
+exports.newContractManagerDev = function(erisdbURL, accounts, callback){
+    edb = edbModule.createInstance(erisdbURL);
+    var pipe = new DevPipe(edb, accounts);
+    var manager = contractsModule.newContractManager(pipe);
+
+    if(callback){
+        edb.start(function(error){
+            if(error){
+                callback(error);
+            } else {
+                callback(null, manager);
+            }
+        })
+    } else {
+        return manager;
+    }
+};
+
+/**
+ * Create a new solidity contracts object from the given pipe.
+ *
+ * @deprecated
  * @param pipe
  * @returns {*|contract}
  */
@@ -29,6 +67,7 @@ exports.contracts = function(pipe){
  * @param {function(error, data)} [callback] - Callback is only needed if using a websocket client. It will fire when
  * the websockets are ready to go. If callback is not provided, the object will be returned,
  * otherwise it is passed as the data param in the (normal error-first) callback.
+ * @deprecated
  */
 exports.contractsDev = function(erisdbURL, privateKey, callback){
     edb = edbModule.createInstance(erisdbURL);
@@ -52,10 +91,12 @@ exports.contractsDev = function(erisdbURL, privateKey, callback){
 /**
  * Get the eris-db instance.
  *
- * TODO This might not be set if the user provides their own pipe. Need to account for this.
+ * TODO This might not be set if the user provides their own pipe. Need to remove this asap.
  * @returns {*}
+ * @deprecated
  */
 exports.getErisDb = function(){
+    console.log("DEPRECATED: Access the eris-db instance through the contract manager instead.");
     return edb;
 };
 

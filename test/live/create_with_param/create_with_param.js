@@ -57,8 +57,8 @@ describe('TestCreateWithParams', function () {
             }
             var edb = edbModule.createInstance("http://localhost:" + port + '/rpc');
             var pipe = new eris.pipes.DevPipe(edb, privKey);
-            contracts = eris.contracts(pipe);
-            contractFactory = contracts(abi);
+            contracts = eris.newContractManager(pipe);
+            contractFactory = contracts.newContractFactory(abi);
             done();
         })
     });
