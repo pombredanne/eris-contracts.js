@@ -32,21 +32,21 @@ var erisC = require('eris-contracts');
 // URL to the rpc endpoint of the eris-db server.
 var erisdbURL = "http://localhost:1337/rpc";
 // See the 'Private Keys and Signing' section below for more info on this.
-var accountData = {address: "...", privKey: "..."};
-// contractsDev lets you use an accountData object (address & private key) directly, i.e. no key/signing daemon is needed.
-var contracts = erisC.contractsDev(erisdbURL, PrivKey);
+var accountData = require('/some/account/data.json');
+// newContractManagerDev lets you use an accountData object (address & private key) directly, i.e. no key/signing daemon is needed. This should only be used while developing/testing.
+var contractManager = erisC.newContractManagerDev(erisdbURL, accountData);
 ``` 
 
-If using a websocket connection, you must add a callback to `contractsDev`.
+If using a websocket connection, you must add a callback to `newContractManagerDev`.
 
 ``` javascript
 // ...
-var contracts;
-erisC.contractsDev(erisdbURL, PrivKey, function(error, _contracts){
+var contractManager;
+erisC.newContractManagerDev(erisdbURL, PrivKey, function(error, _contractManager){
     if(!error){
         // Server is ready.
         // ...
-        contracts = _contracts;
+        contractManager = _contractManager;
     }
 });
 ```
@@ -62,8 +62,8 @@ There is two ways of using these factories/templates - one is to create a javasc
 var myAbi = [...];
 var myCompiledCode = "...";
 
-// Create factory from abi.
-var myContractFactory = contracts(myAbi);
+// Create a factory for the contract with the JSON interface 'myAbi'.
+var myContractFactory = contractManager.newContractFactory(myAbi);
 
 // To create a new instance and simultaneously deploy a contract use `new`:
 var myNewContract;
@@ -75,6 +75,8 @@ myContractFactory.new({data: myCompiledCode}, function(error, contract){
     myNewContract = contract;
 });
 ```
+
+The manager lets you create factories. Factories has all the javascript functionality set up, and single instances are simply clones of the factorys template contract that point to different on-chain contracts.
 
 You may also create a new javascript contract and point it to an already existing solidity contract account using `at`:
 
@@ -147,26 +149,24 @@ For beginners, it can help to think about the public/private keypair as a userna
 
 The exception to the private key rule is if you are testing/developing. It is of course safe to generate a "worthless" key-pair to create test-accounts when developing, since the key is not actually protecting anything of value. It is essentially the same thing as having a test login/password when testing a web-service, or database, or anything else. That is why you may find private keys in things like unit tests.
 
-Even if worthless/throw-away keys are used when developing and testing, it is very important that they are removed before the system goes live, so it is important to handle them with care - even during testing.
+Even if worthless/throw-away keys are used when developing and testing, it is very important that they are removed before the system goes live, so handle them with care - even during dev.
 
 ## API
-
-At the core of this library is the `Contract` objects. Everything else is utilities for creating the contracts and formatting the input and output.
 
 This is an overview and a short description of most objects. More details can be found in the code (jsdoc). This will later replace the current docs and tutorials on our [main site](https://erisindustries.com).
 
 ### eris-contracts (root module)
 
-Eris contracts is what you get when requiring `eris-contracts`. It's a wrapper around the `contracts` module with a few additional utilities. You create contracts using `erisContracts.contracts` or one of its variations. Here's the example from the top:
+Eris contracts is what you get when requiring `eris-contracts`. It's a wrapper around the `contract_manager` module with a few additional utilities. Here's the getting started example from above:
 
 ``` javascript
 var erisC = require('eris-contracts');
 var erisdbURL = "http://localhost:1337/rpc";
-var PrivKey = "...";
-var contracts = erisC.contractsDev(erisdbURL, PrivKey);
+var accountData = require('/some/account/data.json');
+var contractManager = erisC.newContractManagerDev(erisdbURL, accountData);
 ```
 
-The `contractsDev` method is is just a convenient way of doing all of this:
+The `newContractManagerDev` method is is just a convenient way of doing all of this:
 
 ``` javascript
 // Get 'eris-contracts'.
@@ -178,12 +178,12 @@ var erisdbModule = require("eris-db");
 // Create a new instance of ErisDB that uses the given URL.
 var erisdb = erisdbModule.createInstance("http://localhost:1337/rpc");
 // The private key.
-var privKey = "...";
+var accountData = require('/some/account/data.json');
 
 // Create a new pipe. 
-var pipe = new erisContracts.pipes.DevPipe(erisdb, privKey);
+var pipe = new erisContracts.pipes.DevPipe(erisdb, accountData);
 // Create a new contracts object using that pipe.
-var contracts = eris.solidityContracts(pipe);
+var contractManager = erisContracts.newContractManager(pipe);
 ```
 
 #### Pipes
@@ -215,18 +215,18 @@ AccountData
 
 In a local signer implementation, account data would likely just be an identifier used for the account (which is managed elsewhere).
 
-### the contracts module
+### the contracts-manager
 
-The `contracts` module is the basis for all solidity contracts you create. It lets you create contract factories from Solidity ABI files. The factories are all instances of the `ContractFactory` class.
+The `ContractManager` is the basis for all solidity contracts you create. It lets you create contract factories from Solidity ABI files. The factories are all instances of the `ContractFactory` class.
 
 ``` javascript
 var myJsonAbi = [...];
 var myOtherJsonAbi = [...];
 // Create a factory (or contract template) from 'myJsonAbi'
-var myContractFactory = contracts(myJsonAbi);
+var myContractFactory = contractManager.newContractFactory(myJsonAbi);
 
 // Create another factory from 'myOtherJsonAbi'
-var myOtherContractFactory = contracts(myOtherJsonAbi);
+var myOtherContractFactory = contractManager.newContractFactory(myOtherJsonAbi);
 ```
 
 ### ContractFactory
@@ -305,13 +305,13 @@ contract TestContract {
     
     event AddressSet(boolean indexed itWasSet);
 
-    function getInts() external constant returns (int a, int b){
+    function getInts() constant returns (int a, int b){
         a = -10;
         b = -50;
         AddressSet(false);
     }
 
-    function getUints() external constant returns (uint a, uint b){
+    function getUints() constant returns (uint a, uint b){
         a = 10;
         b = 50;
         AddressSet(false);
@@ -347,7 +347,7 @@ Constant functions can be evaluated without the caller having to sign anything u
 
 Currently, `constant` is not enforced by the compiler, but it will be. It is implemented on the javascript side though, and functions that are flagged as constant will be invoked using the `call` method of the RPC library rather then `transact`. `call` does not use the the private key and does not count towards the account nonce/sequence; it simply executes the code and passes any return value back at once.
 
-You may override this by using the `call` and `sendTransaction` methods, although that support may be removed. There is almost never a good reason to do this with `eris-db`. They take the same params as the base methods. 
+You may override this by using the `call` and `sendTransaction` methods, although that support may be removed. There is almost never a good reason to do this with `eris-contracts`. 
 
 These are examples of overriding the default behavior, and also examples of **what not to do**.
 
